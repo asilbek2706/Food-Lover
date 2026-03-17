@@ -10,4 +10,11 @@ export default defineConfig([
         languageOptions: { globals: globals.browser },
     },
     { files: ['**/*.js'], languageOptions: { sourceType: 'script' } },
+    {
+        files: ['webpack.config.js'],
+        languageOptions: {
+            globals: globals.node,
+            sourceType: 'commonjs',
+        },
+    },
 ]);
