@@ -9,7 +9,7 @@ export default defineConfig([
         extends: ['js/recommended'],
         languageOptions: { globals: globals.browser },
     },
-    { files: ['**/*.js'], languageOptions: { sourceType: 'script' } },
+    { files: ['**/*.js'], languageOptions: { sourceType: 'module' } },
     {
         files: ['webpack.config.js'],
         languageOptions: {
