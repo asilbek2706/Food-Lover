@@ -1,181 +1,240 @@
 # Food Lover
 
-A restaurant landing page project built with HTML, CSS, and vanilla JavaScript, bundled with Webpack.
+Food Lover is a restaurant landing page built with HTML, CSS, and modular JavaScript.
+The app is bundled with Webpack and can load offer data from a local JSON API (`json-server`).
 
-## Features
+## What This Project Does
 
-- Responsive single-page restaurant layout.
-- Tabs in the About section (Paris, London, Dubai, Moscow, Tashkent).
-- Loader screen on initial page load.
-- Countdown timer (currently set to `2026-04-01`).
-- Modal window with open/close interactions:
-    - Open via buttons with `data-modal`
-    - Close via backdrop click
-    - Close via `Esc`
-    - Auto-open after timeout
-- Dynamic offers rendering:
-    - Fetches from `http://localhost:3000/offers` (json-server)
-    - Falls back to local `fallbackOffers` if API is unavailable
-- Daytime cards rendered from JavaScript data.
-- Contact form submission to Telegram Bot API.
-- Gallery slider with previous/next controls and counter.
-- Webpack dev server with HMR.
-- ESLint flat config for browser code + Node/CommonJS override for `webpack.config.js`.
+- Shows a full restaurant landing page UI.
+- Renders interactive sections (tabs, modal, slider, timer, dynamic cards).
+- Fetches offers from `http://localhost:3000/offers`.
+- Falls back to local data if API is unavailable.
+- Sends contact form data to Telegram Bot API.
 
 ## Tech Stack
 
 - HTML5
 - CSS3
-- JavaScript (ES6+)
+- JavaScript (ES modules)
 - Webpack 5
-- Webpack Dev Server
-- ESLint
+- webpack-dev-server
+- ESLint (flat config)
 - json-server
 
-## Project Structure
+## How The App Is Organized
 
-```text
-Loyiha-1/
-  .git/
-  .gitignore
-  README.md
-  db.json
-  dist/                         # Build output (generated)
-  eslint.config.mjs
-  favicon.ico
-  icons/
-    left.svg
-    right.svg
-  img/
-    about_img.png
-    breckfastIcon.png
-    contact.jpeg
-    daytime_bg.jpeg
-    dessertIcon.png
-    dinnerIcon.png
-    food1.png
-    food2.png
-    food3.png
-    food4.png
-    food5.png
-    food6.png
-    food7.jpeg
-    food8.jpeg
-    food9.jpeg
-    food10.jpeg
-    food11.jpeg
-    food12.jpeg
-    gallery1.jpeg
-    gallery2.jpeg
-    gallery3.jpeg
-    gallery4.jpeg
-    gallery5.jpeg
-    gallery6.jpeg
-    home_bg.jpeg
-    logo.png
-    lunchIcon.png
-    offer-background.jpg
-    offer1.png
-    offer2.png
-    offer3.png
-  index.html
-  js/
-    script.js
-  node_modules/                 # Dependencies (generated)
-  package-lock.json
-  package.json
-  style.css
-  webpack.config.js
-```
+- `js/script.js` is the entry point.
+- `js/script.js` imports all feature modules and initializes them in order.
+- Each feature is isolated in `js/modules/*.js` with `export` functions.
 
-## Scripts
+Initialization flow inside `js/script.js`:
 
-Defined in `package.json`:
+1. `initTabs()`
+2. `initLoader()`
+3. `initTimer('.timer', '2026-04-01')`
+4. `initModal()` and pass handlers to form logic
+5. `initOffers()`
+6. `initDaytime()`
+7. `initForm({ openModal, closeModal })`
+8. `initSlider()`
 
-- `npm run dev`: Start Webpack dev server (`http://localhost:8080`).
-- `npm run build`: Production build into `dist/`.
-- `npm run watch`: Rebuild on file changes (without dev server).
-- `npm run api`: Run json-server on port `3000` using `db.json`.
+## Full File Guide
 
-## Installation
+### Root Files
+
+- `index.html`: Main page markup and all section containers used by JavaScript modules.
+- `style.css`: All styling for layout, components, and animations.
+- `db.json`: Local API dataset for offers (`offers` collection).
+- `webpack.config.js`: Build/dev configuration.
+- `eslint.config.mjs`: Linting rules for browser and Node contexts.
+- `package.json`: Scripts and dependencies.
+- `README.md`: Project documentation.
+- `favicon.ico`: Site icon.
+
+### JavaScript Files
+
+- `js/script.js`: Entry file that boots the app on `DOMContentLoaded`.
+
+Feature modules in `js/modules`:
+
+- `tabs.js`: Tab switcher for About section.
+- `loader.js`: Hides loader after a delay.
+- `timer.js`: Countdown calculations and timer rendering.
+- `modal.js`: Open/close modal behavior and auto-open timer.
+- `offers.js`: Loads offers from API, renders cards, uses fallback data if request fails.
+- `daytime.js`: Renders daytime schedule cards.
+- `form.js`: Handles form submit, Telegram request, and success/failure status modal.
+- `slider.js`: Gallery slider controls and slide counter updates.
+
+### Asset Folders
+
+- `img/`: Restaurant images and UI icons used by page content.
+- `icons/`: Slider arrow icons (`left.svg`, `right.svg`).
+
+### Generated Folders
+
+- `dist/`: Webpack build output.
+- `node_modules/`: Installed dependencies.
+
+## Features Explained
+
+### Tabs
+
+- Located in About section.
+- One tab is active at a time.
+- Clicked tab reveals corresponding content panel.
+
+### Loader
+
+- Loader overlay appears at startup.
+- Hides automatically after 1.5 seconds.
+
+### Timer
+
+- Countdown target is `2026-04-01`.
+- Updates day/hour/minute/second every second.
+- Stops at zero.
+
+### Modal
+
+- Opens from buttons using `data-modal`.
+- Closes by overlay click.
+- Closes by `Esc` key.
+- Auto-opens after configured timeout.
+
+### Offers (API + Fallback)
+
+- Primary source: `http://localhost:3000/offers`.
+- If API fails, local fallback offers are rendered.
+- Each offer shows image, title, text, old price, and sale price.
+
+### Daytime Cards
+
+- Renders cards for Breakfast, Lunch, Dinner, and Dessert.
+- Data is defined in module and mapped to DOM cards.
+
+### Contact Form
+
+- Collects `name` and `phone`.
+- Sends payload to Telegram Bot API.
+- Shows success/failure modal feedback.
+
+### Slider
+
+- Prev/next controls for gallery images.
+- Tracks current slide and total slides.
+- Uses translateX offset for movement.
+
+## NPM Scripts
+
+- `npm run dev`: Start Webpack dev server at `http://localhost:8080`.
+- `npm run build`: Create production build in `dist/`.
+- `npm run watch`: Build continuously in watch mode.
+- `npm run api`: Start local json-server at `http://localhost:3000`.
+
+## Setup and Run
+
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-## Run (Recommended)
-
-Use two terminals:
-
-1. Start frontend:
+2. Start frontend dev server:
 
 ```bash
 npm run dev
 ```
 
-2. Start local API for offers:
+3. Start local API in another terminal:
 
 ```bash
 npm run api
 ```
 
-Then open `http://localhost:8080`.
+4. Open:
 
-## Data Source
+```text
+http://localhost:8080
+```
 
-- `db.json` currently provides:
-    - `offers[]` with `src`, `alt`, `title`, `descr`, `discount`, `sale`.
+## Build Process
 
-## Build Output
+Run production build:
 
-Webpack outputs to `dist/`:
+```bash
+npm run build
+```
 
-- `index.html` (generated from template)
-- `js/bundle.[contenthash:8].js`
-- copied static assets:
-    - `style.css`
-    - `img/`
-    - `icons/`
-    - `favicon.ico`
+Webpack output includes:
 
-## Configuration Files
+- `dist/index.html` generated by `HtmlWebpackPlugin`
+- `dist/js/bundle.[contenthash:8].js`
+- copied static assets from root:
+- `style.css`
+- `img/`
+- `icons/`
+- `favicon.ico`
 
-- `webpack.config.js`
-    - Entry: `./js/script.js`
-    - Output: `dist/js/bundle.[contenthash:8].js`
-    - Plugins:
-        - `HtmlWebpackPlugin`
-        - `CopyWebpackPlugin`
-    - Dev server:
-        - Port `8080`
-        - `open: true`
-        - `hot: true`
+## Configuration Summary
 
-- `eslint.config.mjs`
-    - Base JS recommended rules
-    - Browser globals for frontend files
-    - Node globals + CommonJS source type for `webpack.config.js`
+### Webpack (`webpack.config.js`)
 
-## Notes
+- Entry: `./js/script.js`
+- Output: `dist/js/bundle.[contenthash:8].js`
+- Cleans `dist` before build.
+- Dev server on port `8080` with `open` and `hot` enabled.
+- Uses:
+- `HtmlWebpackPlugin` to inject bundle into HTML.
+- `CopyWebpackPlugin` to copy static files.
 
-- If `json-server` is not running, offers still render from fallback data in `js/script.js`.
-- The contact form uses Telegram API credentials directly in frontend code. For production, move secrets to a backend service.
-- Large images may trigger Webpack performance warnings; this does not stop build execution.
+### ESLint (`eslint.config.mjs`)
 
-## Quick Troubleshooting
+- Uses `@eslint/js` recommended rules.
+- Browser globals for frontend files.
+- `sourceType: 'module'` for frontend `.js` files.
+- Node globals + CommonJS source type for `webpack.config.js`.
 
-- If `npm run dev` fails, run:
+## Data Contract (`db.json`)
+
+The `offers` array items use:
+
+- `src`: image path
+- `alt`: image alt text
+- `title`: offer title
+- `descr`: description text
+- `discount`: old price value
+- `sale`: discounted price value
+
+## Security Note
+
+- Telegram bot token and chat ID are currently in frontend code.
+- For real production use, move secrets to a backend service and call backend from frontend.
+
+## Troubleshooting
+
+### `npx json-server db.json` fails
+
+Use the project script instead:
+
+```bash
+npm run api
+```
+
+### Offers do not appear
+
+- Ensure API server is running on port `3000`.
+- Check `http://localhost:3000/offers` in browser.
+- If API is down, fallback offers should still display.
+
+### Dev server not starting
 
 ```bash
 npm install
+npm run dev
 ```
 
-- If offers are empty, run:
+### Port already in use
 
-```bash
-npm run api
-```
-
-- If port conflicts occur:
-    - change `devServer.port` in `webpack.config.js`
-    - or stop process using the same port.
+- Stop process using port `8080` or `3000`.
+- Or change ports in `webpack.config.js` and/or script command.
