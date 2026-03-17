@@ -74,19 +74,46 @@ function renderOffers(data) {
     });
 }
 
-export function initOffers() {
-    fetch('http://localhost:3000/offers', {
-        method: 'GET',
-        headers: { 'content-type': 'application/json' },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Offers request failed with status ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => renderOffers(data))
-        .catch(() => {
-            renderOffers(fallbackOffers);
+async function fetchLocalOffers(url, timeoutMs = 4000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'content-type': 'application/json' },
+            signal: controller.signal,
         });
+
+        if (!response.ok) {
+            throw new Error(`Offers request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+            throw new Error('Offers response is not an array');
+        }
+
+        return data;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+export async function initOffers() {
+    const isLocalEnv =
+        window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // On hosted environments (e.g. Vercel), use fallback data unless a backend API is added.
+    if (!isLocalEnv) {
+        renderOffers(fallbackOffers);
+        return;
+    }
+
+    try {
+        const data = await fetchLocalOffers('http://localhost:3000/offers');
+        renderOffers(data);
+    } catch {
+        renderOffers(fallbackOffers);
+    }
 }

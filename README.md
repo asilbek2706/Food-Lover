@@ -7,8 +7,8 @@ The app is bundled with Webpack and can load offer data from a local JSON API (`
 
 - Shows a full restaurant landing page UI.
 - Renders interactive sections (tabs, modal, slider, timer, dynamic cards).
-- Fetches offers from `http://localhost:3000/offers`.
-- Falls back to local data if API is unavailable.
+- In local development, fetches offers from `http://localhost:3000/offers`.
+- In hosted environments (for example Vercel), skips localhost calls and uses fallback offer data.
 - Sends contact form data to Telegram Bot API.
 
 ## Tech Stack
@@ -105,8 +105,32 @@ Feature modules in `js/modules`:
 ### Offers (API + Fallback)
 
 - Primary source: `http://localhost:3000/offers`.
-- If API fails, local fallback offers are rendered.
+- On deployed hosts (non-localhost), fallback offers are rendered by default.
+- If local API fails in development, fallback offers are rendered.
 - Each offer shows image, title, text, old price, and sale price.
+
+## Vercel Deployment
+
+This project is configured for static deployment on Vercel.
+
+`vercel.json` settings:
+
+- `buildCommand`: `npm run build`
+- `outputDirectory`: `dist`
+- `cleanUrls`: `true`
+- `trailingSlash`: `false`
+- security headers:
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+
+Deploy steps:
+
+1. Push project to GitHub.
+2. Import repository in Vercel dashboard.
+3. Keep framework preset as `Other`.
+4. Confirm build command is `npm run build`.
+5. Confirm output directory is `dist`.
+6. Deploy.
 
 ### Daytime Cards
 
